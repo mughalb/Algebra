@@ -1,0 +1,159 @@
+<script>
+
+function solve(tmp) {
+	var regex = /([\+\-\*\/])/;
+    term = tmp.split(regex);
+    var prev = "";
+
+    var A = "0";
+    var B = "0";
+    var C = "0";
+    var D = "0";
+	
+	//Length of Vars
+    var lA = 1;
+    var lB =1;
+    var lC = 1;
+    var lD = 1;
+
+    for(i =0; i<term.length ;i++){
+    	if(term[i].includes("+") || term[i].includes("-") || term[i].includes("*")  || term[i].includes("/") ){
+    		prev = term[i];
+    	}else{
+    		    	if(degree(term[i]) == 3){
+    		    	A = A + " " + prev + term[i];
+    		    	lA++;
+    		    	}else if(degree(term[i]) == 2){
+
+    		    	B = B + " " + prev + term[i];
+    		    	lB++;
+
+    		    	}else if(degree(term[i]) == 1){
+    		    	C = C + " " + prev + term[i];
+    		    	lC++;
+
+    		    	}else{
+    		    	D = D + " " + prev + term[i];
+    		    	lD++;
+    		    	}
+    	}
+    	
+    }
+
+
+    var A = evaluateExp(A,lA,true);
+	var B = evaluateExp(B,lB,true);
+	var C = evaluateExp(C,lC,true);
+	var D = evaluateExp(D,lD,false);
+
+    document.write("Value of A: " + A + "</br>");
+    document.write("Value of B: " + B + "</br>");
+    document.write("Value of C: " + C + "</br>");
+    document.write("Value of D: " + D + "</br>");
+
+	if(A==0){
+	if(B==0){
+	if(C==0){
+	return D;
+	}
+		return linearFormula(C,D);
+	}
+		return quadraticFormula(B,C,D);
+	}
+    return cubicFormula(A,B,C,D);
+
+
+}
+
+function cubicFormula(a,b,c,d){
+	document.write("</br>Equation is Cubic");
+	var p = -b/(3*a);
+	var r = c/(3*a);
+	var q = p^3 + (b*c-3*a*d)/(6*a^2);
+	var x = (q + (q^2 + (r-p^2)^3)^(1/2))^(1/3)   +   (q - (q^2 + (r-p^2)^3)^(1/2))^(1/3)   +   p;
+	return x;
+}
+
+function quadraticFormula(a,b,c){
+	document.write("</br>Equation is Quadratic");
+
+var x=-b/2/a+Math.pow(Math.pow(b,2)-4*a*c,0.5)/2/a;
+return x;
+}
+
+function linearFormula(c,d){
+	document.write("</br>Equation is Linear");
+
+if(c == 0){
+c = 1;
+}
+d = -1*d;
+return d/c;
+}
+
+//Add sign infront of term
+function addSign(tmp) {
+    if(tmp >= 0){
+		tmp = "+" + tmp;
+	}
+	return tmp;
+}
+
+//Evals expression like +2 +4 -3 
+function evaluateExp(tmp,n,t){
+	arr = tmp.split(" ",n);
+	sum = 0;
+	for(i =0 ; i <arr.length; i++){
+		if(t){
+		arr[i] = removeVariable(arr[i]);
+	}
+		arr[i] = addSign(parseInt(arr[i]));
+		if(arr[i] == " " || arr[i] == ""){
+		}else{
+		sum+= parseInt(arr[i]);
+		}
+	}
+	return sum;
+}
+
+function removeVariable(tmp){
+	
+	tmp2 = tmp.split("x",1);
+	return tmp2;
+
+}
+
+function degree(tmp){
+
+	if(tmp.includes("x^3")){
+		return 3;
+	}else if(tmp.includes("x^2")){
+		return 2;
+	}else if(tmp.includes("x")){
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+
+}
+
+//Enter The Expression HERE
+var exp = "2x^2-5x=3";
+
+document.write("Equation Given: " + exp + "</br>");
+var splitEqual = exp.split("=",2);
+
+if(splitEqual[1] != 0){
+	splitEqual[1] = -1 * splitEqual[1];
+
+	var exp = splitEqual[0]  + addSign(splitEqual[1]);
+	document.write("Get Zero On RHS:" + exp + " = 0" +"</br>");
+}else{
+
+	exp = splitEqual[0];
+}
+
+document.write("</br>Answer is " + solve(exp));
+</script>
